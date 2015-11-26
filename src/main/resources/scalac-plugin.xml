@@ -1,0 +1,4 @@
+<plugin>
+    <name>plugin-sample</name>
+    <classname>com.github.tkqubo.validations.SamplePlugin</classname>
+</plugin>

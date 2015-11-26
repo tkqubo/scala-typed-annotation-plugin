@@ -6,6 +6,7 @@ val specs2Ver = "3.6.4"
 
 
 libraryDependencies ++= Seq(
+  "org.scala-lang" % "scala-compiler" % "2.11.7",
   "org.scala-lang" % "scala-reflect" % "2.11.7",
   "org.specs2" %% "specs2-core" % specs2Ver % "test",
   "org.specs2" %% "specs2-matcher" % specs2Ver % "test",
