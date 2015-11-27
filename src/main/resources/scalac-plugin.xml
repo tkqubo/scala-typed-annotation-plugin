@@ -1,4 +1,4 @@
 <plugin>
-    <name>plugin-sample</name>
-    <classname>com.github.tkqubo.validations.SamplePlugin</classname>
+    <name>typed-annotation</name>
+    <classname>com.github.tkqubo.typed_annotation.TypedAnnotationPlugin</classname>
 </plugin>

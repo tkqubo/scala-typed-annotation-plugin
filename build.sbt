@@ -1,4 +1,4 @@
-name := "scala-validation"
+name := "typed-annotation"
 
 scalaVersion := "2.11.7"
 
@@ -25,7 +25,7 @@ publishArtifact in Test := false
 publishMavenStyle := true
 pomIncludeRepository := { _ => false }
 pomExtra := (
-  <url>https://github.com/tkqubo/scala-validation</url>
+  <url>https://github.com/tkqubo/typed-annotation</url>
     <licenses>
       <license>
         <name>MIT</name>
@@ -33,9 +33,9 @@ pomExtra := (
       </license>
     </licenses>
     <scm>
-      <url>git@github.com:tkqubo/scala-validation.git</url>
-      <connection>scm:git:github.com/tkqubo/scala-validation.git</connection>
-      <developerConnection>scm:git:git@github.com:tkqubo/scala-validation.git</developerConnection>
+      <url>git@github.com:tkqubo/typed-annotation.git</url>
+      <connection>scm:git:github.com/tkqubo/typed-annotation.git</connection>
+      <developerConnection>scm:git:git@github.com:tkqubo/typed-annotation.git</developerConnection>
     </scm>
     <developers>
       <developer>
