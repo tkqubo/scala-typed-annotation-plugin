@@ -1,9 +1,7 @@
-name := "typed-annotation"
+name := "typed-annotation-plugin"
 
 scalaVersion := "2.11.7"
-
-val specs2Ver = "3.6.4"
-
+val specs2Ver = "3.6.5"
 
 libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-compiler" % "2.11.7",
@@ -18,14 +16,14 @@ javaOptions in Test ++= Seq(
   s"-Djava.util.Arrays.useLegacyMergeSort=true"
 )
 
-initialCommands := "import com.github.tkqubo.typedAnnotation._"
+initialCommands := "import com.github.tkqubo.typed_annotation._"
 
 // sbt publish
 publishArtifact in Test := false
 publishMavenStyle := true
 pomIncludeRepository := { _ => false }
 pomExtra := (
-  <url>https://github.com/tkqubo/typed-annotation</url>
+  <url>https://github.com/tkqubo/scala-typed-annotation-plugin</url>
     <licenses>
       <license>
         <name>MIT</name>
@@ -33,9 +31,9 @@ pomExtra := (
       </license>
     </licenses>
     <scm>
-      <url>git@github.com:tkqubo/typed-annotation.git</url>
-      <connection>scm:git:github.com/tkqubo/typed-annotation.git</connection>
-      <developerConnection>scm:git:git@github.com:tkqubo/typed-annotation.git</developerConnection>
+      <url>git@github.com:tkqubo/scala-typed-annotation-plugin.git</url>
+      <connection>scm:git:github.com/tkqubo/scala-typed-annotation-plugin.git</connection>
+      <developerConnection>scm:git:git@github.com:tkqubo/scala-typed-annotation-plugin.git</developerConnection>
     </scm>
     <developers>
       <developer>
@@ -61,3 +59,9 @@ releasePublishArtifactsAction := PgpKeys.publishSigned.value
 
 // disable using the Scala version in output paths and artifacts
 crossPaths := false
+
+// sbt-ghpages
+site.settings
+site.includeScaladoc()
+ghpages.settings
+git.remoteRepo := "git@github.com:tkqubo/scala-typed-annotation-plugin.git"

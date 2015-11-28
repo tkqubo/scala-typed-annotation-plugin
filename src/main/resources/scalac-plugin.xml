@@ -1,4 +1,4 @@
 <plugin>
-    <name>typed-annotation</name>
+    <name>typed-annotation-plugin</name>
     <classname>com.github.tkqubo.typed_annotation.TypedAnnotationPlugin</classname>
 </plugin>

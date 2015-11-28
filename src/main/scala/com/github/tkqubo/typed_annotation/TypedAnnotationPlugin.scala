@@ -58,7 +58,7 @@ class TypedAnnotationPlugin(val global: Global) extends Plugin {
           .annotations
           .map { (info: global.AnnotationInfo) =>
             info.atp.typeSymbol
-              .getAnnotation(symbolOf[com.github.tkqubo.typed_annotation.Typed])
+              .getAnnotation(symbolOf[TypedAnnotation])
               .map((typedInfo: global.AnnotationInfo) =>
                 TypedAnnotatedValOrDefDef(valOrDefDef, info, typedInfo)
               )

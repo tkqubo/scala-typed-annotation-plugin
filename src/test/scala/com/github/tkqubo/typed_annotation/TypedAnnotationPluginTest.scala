@@ -3,7 +3,7 @@ package com.github.tkqubo.typed_annotation
 import scala.annotation.StaticAnnotation
 
 //noinspection ScalaStyle
-@Typed(classOf[Long])
+@TypedAnnotation(classOf[Long])
 class shouldBeOnLong extends StaticAnnotation
 
 object TypedAnnotationPluginTest {
