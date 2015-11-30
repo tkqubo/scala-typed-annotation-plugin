@@ -24,46 +24,58 @@ class TypedAnnotationPlugin(val global: Global) extends Plugin {
     override def newPhase(prev: Phase): StdPhase = new StdPhase(prev) {
       override def name = selfPlugin.name
       override def apply(unit: CompilationUnit): Unit = {
-        listTypes(listTypedAnnotatedValOrDefDef(unit))
-          .filterNot { tuple => tuple.annotationType <:< tuple.annotatedType }
-          .foreach { tuple =>
-            reporter.error(tuple.valOrDefDef.pos, formatErrorMessage(tuple))
-          }
+        val annotationDefinitions: List[global.ClassDef] =
+          unit.body.collect { case x @ ClassDef(_, _, _, Template(types, _, _)) if types.exists(extendsAnnotation(_: Tree, "StaticAnnotation")) => x }
+
+        val typedAnnotationDefinitions: List[global.ClassDef] =
+          annotationDefinitions.filter(_.symbol.hasAnnotation(symbolOf[TypedAnnotation]))
+
+        val annotatedValOrDefDefs = unit.body
+          .collect { case x: ValOrDefDef if typedAnnotationDefinitions.exists(classDef => x.symbol.hasAnnotation(classDef.symbol)) => x }
+
+        annotatedValOrDefDefs.foreach(validateValOrDefDef(_, typedAnnotationDefinitions))
       }
     }
   }
 
-  private def formatErrorMessage(tuple: ValOrDefDefWithType): String =
-    s"Not annotated correctly.  This definition is annotated as ${tuple.annotationType} but actually ${tuple.annotatedType}"
+  private def validateValOrDefDef(valOrDefDef: global.ValOrDefDef, typedAnnotationDefinitions: List[global.ClassDef]): Unit = {
+    val applicableDefinitions: List[AnnotationInfo] = typedAnnotationDefinitions
+      .map(definition => valOrDefDef.symbol.getAnnotation(definition.symbol))
+      .collect(collectSome)
 
-  private def listTypes(list: List[TypedAnnotatedValOrDefDef]): List[ValOrDefDefWithType] = {
-    list
-      .map { tuple =>
-        val maybeAnnotationValue = tuple.typedAnnotationInfo
-          .assocs
-          .find(_._1.toString == "value")
-          .collect { case (_, LiteralAnnotArg(Constant(value: NoArgsTypeRef))) => value }
-        maybeAnnotationValue.map { (annotationValue: NoArgsTypeRef) =>
-          ValOrDefDefWithType(tuple.valOrDefDef, annotationValue, tuple.valOrDefDef.tpt.tpe)
-        }
+    val typedAnnotations: List[AnnotationInfo] =
+      applicableDefinitions
+        .map(_.symbol.getAnnotation(symbolOf[TypedAnnotation]))
+        .collect(collectSome)
+
+    val expectedTypes: List[NoArgsTypeRef] =
+      typedAnnotations.map(getTypedType)
+
+    expectedTypes
+      .filterNot(valOrDefDef.tpt.tpe.weak_<:<(_))
+      .foreach { typ =>
+        val message = formatErrorMessage(typ, valOrDefDef.tpt.tpe)
+        reporter.error(valOrDefDef.pos, message)
       }
-      .collect { case Some(x) => x }
   }
 
-  private def listTypedAnnotatedValOrDefDef(unit: CompilationUnit): List[TypedAnnotatedValOrDefDef] = {
-    unit.body
-      .collect { case x: ValOrDefDef if x.symbol.annotations.nonEmpty => x }
-      .flatMap { (valOrDefDef: global.ValOrDefDef) =>
-        valOrDefDef.symbol
-          .annotations
-          .map { (info: global.AnnotationInfo) =>
-            info.atp.typeSymbol
-              .getAnnotation(symbolOf[TypedAnnotation])
-              .map((typedInfo: global.AnnotationInfo) =>
-                TypedAnnotatedValOrDefDef(valOrDefDef, info, typedInfo)
-              )
-          }
+  private def collectSome[T]: PartialFunction[Option[T], T] = { case Some(x) => x }
+
+  private def formatErrorMessage(annotationType: global.Type, annotatedType: global.Type): String =
+    s"Not annotated correctly.  This definition is annotated as $annotationType but actually $annotatedType"
+
+  private def getTypedType(info: AnnotationInfo): NoArgsTypeRef =
+    info.assocs
+      .find(_._1.toString == "value")
+      .collect { case (_, LiteralAnnotArg(Constant(value: NoArgsTypeRef))) => value }
+      .get
+
+  private def extendsAnnotation(tree: Tree, targetName: String): Boolean = tree match {
+    case tt: TypeTree =>
+      tt.original match {
+        case Select(_, className) => className.toString == targetName
+        case _ => false
       }
-      .collect { case Some(x) => x }
+    case _ => false
   }
 }

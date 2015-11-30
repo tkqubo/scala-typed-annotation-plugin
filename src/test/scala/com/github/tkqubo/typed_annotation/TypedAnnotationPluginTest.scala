@@ -2,9 +2,15 @@ package com.github.tkqubo.typed_annotation
 
 import scala.annotation.StaticAnnotation
 
+trait Hoge
+
+class Foo
+
+class Bar extends StaticAnnotation
+
 //noinspection ScalaStyle
 @TypedAnnotation(classOf[Long])
-class shouldBeOnLong extends StaticAnnotation
+class shouldBeOnLong extends StaticAnnotation with Hoge
 
 object TypedAnnotationPluginTest {
   @shouldBeOnLong
