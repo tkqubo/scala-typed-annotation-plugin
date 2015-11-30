@@ -7,8 +7,6 @@ import scala.tools.nsc.{Global, Phase}
 class TypedAnnotationPlugin(val global: Global) extends Plugin {
   selfPlugin =>
   import global._
-  case class TypedAnnotatedValOrDefDef(valOrDefDef: ValOrDefDef, annotationInfo: AnnotationInfo, typedAnnotationInfo: AnnotationInfo)
-  case class ValOrDefDefWithType(valOrDefDef: ValOrDefDef, annotationType: global.Type, annotatedType: global.Type)
 
   override val name = "typed-annotation"
   override val description = "type check against annotated member"
@@ -24,10 +22,10 @@ class TypedAnnotationPlugin(val global: Global) extends Plugin {
     override def newPhase(prev: Phase): StdPhase = new StdPhase(prev) {
       override def name = selfPlugin.name
       override def apply(unit: CompilationUnit): Unit = {
-        val annotationDefinitions: List[global.ClassDef] =
+        val annotationDefinitions: List[ClassDef] =
           unit.body.collect { case x @ ClassDef(_, _, _, Template(types, _, _)) if types.exists(extendsAnnotation(_: Tree, "StaticAnnotation")) => x }
 
-        val typedAnnotationDefinitions: List[global.ClassDef] =
+        val typedAnnotationDefinitions: List[ClassDef] =
           annotationDefinitions.filter(_.symbol.hasAnnotation(symbolOf[TypedAnnotation]))
 
         val annotatedValOrDefDefs = unit.body
@@ -38,7 +36,7 @@ class TypedAnnotationPlugin(val global: Global) extends Plugin {
     }
   }
 
-  private def validateValOrDefDef(valOrDefDef: global.ValOrDefDef, typedAnnotationDefinitions: List[global.ClassDef]): Unit = {
+  private def validateValOrDefDef(valOrDefDef: ValOrDefDef, typedAnnotationDefinitions: List[ClassDef]): Unit = {
     val applicableDefinitions: List[AnnotationInfo] = typedAnnotationDefinitions
       .map(definition => valOrDefDef.symbol.getAnnotation(definition.symbol))
       .collect(collectSome)
