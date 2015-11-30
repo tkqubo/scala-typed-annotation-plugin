@@ -17,7 +17,7 @@ class TypedAnnotationPlugin(val global: Global) extends Plugin {
   private object Component extends PluginComponent {
 
     override val global: selfPlugin.global.type = selfPlugin.global
-    override val runsAfter  = List("refchecks")
+    override val runsAfter  = List("parser")
     override val runsBefore = List("")
     override val phaseName = selfPlugin.name
 
