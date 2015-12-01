@@ -20,7 +20,7 @@ class shouldBeOnLong extends StaticAnnotation
 
 object TypedAnnotationPluginTest {
   @shouldBeOnLong
-  val name = "hoge" // compilation error
+  val name = "foo" // compilation error
 
   @shouldBeOnLong
   def main(args: Array[String]): Unit = {
