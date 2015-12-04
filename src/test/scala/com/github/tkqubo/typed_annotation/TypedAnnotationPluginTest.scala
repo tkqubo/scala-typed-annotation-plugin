@@ -45,3 +45,4 @@ object TypedAnnotationPluginTest {
   @childNamed("child")
   var child: Child = null
 }
+
