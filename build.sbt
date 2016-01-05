@@ -1,6 +1,9 @@
+organization := "com.github.tkqubo"
+
 name := "typed-annotation-plugin"
 
 scalaVersion := "2.11.7"
+
 val specs2Ver = "3.6.5"
 
 libraryDependencies ++= Seq(
